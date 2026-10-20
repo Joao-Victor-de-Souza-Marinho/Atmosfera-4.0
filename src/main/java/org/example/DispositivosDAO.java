@@ -10,7 +10,7 @@ import java.util.List;
 public class DispositivosDAO {
 
     public void cadastrar(Dispositivos dispositivos) {
-        String sql = "INSERT INTO dispositivos(nome_dispositivo,localizacao,tipo_dispositivo) values (?, ?, ?)";
+        String sql = "INSERT INTO dispositivos(nome_dispositivo,localizacao,tipo_dispositivo,gateway_pai_fk) values (?, ?, ?,?)";
         try (
                 Connection conn = Conexao.abrir();
                 PreparedStatement stmt = conn.prepareStatement(sql)
@@ -18,7 +18,8 @@ public class DispositivosDAO {
             stmt.setString(1, dispositivos.getNomeDispositivo());
             stmt.setString(2, dispositivos.getLocalizacao());
             stmt.setString(3, dispositivos.getTipoDispositivo());
-            stmt.executeUpdate(sql);
+            stmt.setInt(4,dispositivos.getGatewayPai());
+            stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -48,8 +49,9 @@ public class DispositivosDAO {
                 Dispositivos dispositivo = new Dispositivos(
                         resultado.getInt("id_dispositivos"),
                         resultado.getString("nome_dispositivo"),
-                        resultado.getString("localizacao"),
                         resultado.getString("tipo_dispositivo"),
+                        resultado.getString("localizacao"),
+
                         gatewayPai
                 );
                 dispositivos.add(dispositivo);
@@ -60,5 +62,35 @@ public class DispositivosDAO {
         return dispositivos;
     }
 
+    public Dispositivos listarPorId(Integer id){
+        String sql = "SELECT * FROM dispositivos WHERE id_dispositivos = ?";
+        try(Connection conn = Conexao.abrir();
+            PreparedStatement stmt = conn.prepareStatement(sql)){
+
+            stmt.setInt(1,id);
+            ResultSet resultado = stmt.executeQuery();
+
+            if (resultado.next()){
+                int gateway = resultado.getInt("gateway_pai_fk");
+                Integer gatewayPai;
+
+                if (resultado.wasNull()){
+                    gatewayPai = null;
+                }else{
+                    gatewayPai = gateway;
+                }
+                Dispositivos dispositivos = new Dispositivos(resultado.getInt("id_dispositivos"),
+                        resultado.getString("nome_dispositivo"),
+                        resultado.getString("tipo_dispositivo"),
+                        resultado.getString("localizacao"),
+                        gatewayPai);
+                return dispositivos;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }
