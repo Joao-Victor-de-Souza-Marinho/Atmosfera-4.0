@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.sql.Types;
 public class DispositivosDAO {
 
     public void cadastrar(Dispositivos dispositivos) {
@@ -92,5 +92,42 @@ public class DispositivosDAO {
         }
         return null;
     }
+
+    public void atualizar(Dispositivos dispositivos,Integer id){
+        String sql = "UPDATE dispositivos SET nome_dispositivo = ?, tipo_dispositivo = ?, localizacao = ?, gateway_pai_fk = ? WHERE id_dispositivos = ?";
+
+        try(Connection conn = Conexao.abrir();
+            PreparedStatement stmt = conn.prepareStatement(sql)){
+
+                stmt.setString(1, dispositivos.getNomeDispositivo());
+                stmt.setString(2, dispositivos.getTipoDispositivo());
+                stmt.setString(3, dispositivos.getLocalizacao());
+                if (dispositivos.getGatewayPai() != null) {
+                    stmt.setInt(4, dispositivos.getGatewayPai());
+                }else{
+                    stmt.setNull(4,Types.INTEGER);
+                }
+                stmt.setInt(5, id);
+                stmt.executeUpdate();
+
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void excluir(Integer id){
+        String sql = "DELETE FROM dispositivos where id_dispositivos = ?";
+        try(Connection conn = Conexao.abrir();
+            PreparedStatement stmt = conn.prepareStatement(sql)){
+            stmt.setInt(1,id);
+            stmt.executeUpdate();
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+
 
 }
