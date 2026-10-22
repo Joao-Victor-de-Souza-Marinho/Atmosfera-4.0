@@ -15,10 +15,15 @@ public class DispositivosDAO {
                 Connection conn = Conexao.abrir();
                 PreparedStatement stmt = conn.prepareStatement(sql)
         ) {
+
             stmt.setString(1, dispositivos.getNomeDispositivo());
             stmt.setString(2, dispositivos.getLocalizacao());
             stmt.setString(3, dispositivos.getTipoDispositivo());
-            stmt.setInt(4,dispositivos.getGatewayPai());
+            if (dispositivos.getGatewayPai() == null){
+                stmt.setNull(4,Types.INTEGER);
+            }else{
+                stmt.setInt(4,dispositivos.getGatewayPai());
+            }
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -94,14 +99,14 @@ public class DispositivosDAO {
     }
 
     public void atualizar(Dispositivos dispositivos,Integer id){
-        String sql = "UPDATE dispositivos SET nome_dispositivo = ?, tipo_dispositivo = ?, localizacao = ?, gateway_pai_fk = ? WHERE id_dispositivos = ?";
+        String sql = "UPDATE dispositivos SET nome_dispositivo = ?, localizacao = ?,tipo_dispositivo = ?, gateway_pai_fk = ? WHERE id_dispositivos = ?";
 
         try(Connection conn = Conexao.abrir();
             PreparedStatement stmt = conn.prepareStatement(sql)){
 
                 stmt.setString(1, dispositivos.getNomeDispositivo());
-                stmt.setString(2, dispositivos.getTipoDispositivo());
-                stmt.setString(3, dispositivos.getLocalizacao());
+                stmt.setString(2, dispositivos.getLocalizacao());
+                stmt.setString(3, dispositivos.getTipoDispositivo());
                 if (dispositivos.getGatewayPai() != null) {
                     stmt.setInt(4, dispositivos.getGatewayPai());
                 }else{

@@ -23,6 +23,13 @@ public class Dispositivos {
         this.gatewayPai = gatewayPai;
     }
 
+    public Dispositivos(String nomeDispositivo, String tipoDispositivo, String localizacao, Integer gatewayPai) {
+        this.nomeDispositivo = nomeDispositivo;
+        this.tipoDispositivo = tipoDispositivo;
+        this.localizacao = localizacao;
+        this.gatewayPai = gatewayPai;
+    }
+
     public Integer getId() {
         return id;
     }
